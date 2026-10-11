@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Takeback — Scraper &amp; Nmap Toolkit</title>
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header><h1>TAKEBACK</h1><p>Web scraper &amp; nmap command builder for Termux / Zenmap</p></header>
+<main>
+<div class="tabs">
+<button class="alt active" data-tab="scrape">Scraper</button>
+<button class="alt" data-tab="nmap">Nmap Builder</button>
+</div>
+
+<section id="scrape" class="card">
+<form id="sform" class="row"><input id="url" placeholder="https://example.com" required><button>Scrape</button></form>
+<div id="sout"></div>
+</section>
+
+<section id="nmap" class="card hidden">
+<label>Target (host / IP / CIDR)</label><input id="target" placeholder="scanme.nmap.org" style="width:100%">
+<label>Profile</label>
+<select id="profile" style="width:100%">
+<option value="-T4 -F">Quick scan</option>
+<option value="-T4 -A -v">Intense scan</option>
+<option value="-sV -T4">Service versions</option>
+<option value="-sn">Ping sweep</option>
+<option value="-p- -T4">All TCP ports</option>
+<option value="-sU --top-ports 50">Top 50 UDP ports</option>
+<option value="--script vuln">Vuln scripts</option>
+</select>
+<label>Extra flags</label><input id="extra" placeholder="-Pn -oN out.txt" style="width:100%">
+<p class="warn">Only scan systems you own or have written permission to test. Nmap runs on your device, not on Netlify.</p>
+<pre id="cmd">nmap …</pre>
+<div class="row"><button id="copy">Copy command</button><button id="dl" class="alt">Download Termux script</button></div>
+<p class="warn">Termux setup: <code>pkg install nmap</code>. Paste the command, or open the .xml output (<code>-oX scan.xml</code>) in Zenmap on desktop.</p>
+</section>
+</main>
+<script src="app.js"></script>
+</body></html>

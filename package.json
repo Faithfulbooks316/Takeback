@@ -1,0 +1,7 @@
+{
+  "name": "takeback",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Web scraper + nmap command builder for Netlify and Termux",
+  "engines": { "node": ">=18" }
+}
