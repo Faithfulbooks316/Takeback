@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101318">
+  <meta name="description" content="An offline-friendly, searchable Termux field guide to packages, shell commands, Android integration, and practical workflows.">
+  <title>Termux Field Guide</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101318;
+      --panel: #171c23;
+      --panel-2: #1d242d;
+      --line: #2a333e;
+      --text: #edf3f5;
+      --muted: #a0adb5;
+      --green: #8be0b1;
+      --mint: #b8f2d0;
+      --blue: #95c8ff;
+      --amber: #ffd083;
+      --pink: #ff9fb3;
+      --shadow: 0 18px 55px #0005;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(ellipse at 10% 0%, #173229 0, transparent 35rem),
+        radial-gradient(ellipse at 95% 5%, #17283b 0, transparent 34rem),
+        var(--bg);
+      line-height: 1.55;
+    }
+    a { color: var(--blue); }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    .wrap { width: min(1180px, calc(100% - 36px)); margin: 0 auto; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 22px 0; }
+    .brand { display: flex; align-items: center; gap: 11px; font-weight: 800; letter-spacing: .02em; }
+    .brand-icon { display: grid; place-items: center; width: 35px; height: 35px; border-radius: 11px; color: #102118; background: var(--green); font: 900 19px/1 ui-monospace, monospace; }
+    .top-link { color: var(--muted); font-size: .86rem; text-decoration: none; }
+    .top-link:hover { color: var(--mint); }
+    .hero { padding: 50px 0 30px; max-width: 850px; }
+    .eyebrow { color: var(--green); text-transform: uppercase; font-size: .76rem; font-weight: 800; letter-spacing: .16em; }
+    h1 { max-width: 750px; margin: 14px 0; font-size: clamp(2.7rem, 7vw, 5.5rem); line-height: .99; letter-spacing: -.065em; }
+    h1 span { color: var(--green); }
+    .lede { max-width: 680px; margin: 20px 0 24px; color: #bbc6cb; font-size: clamp(1rem, 2vw, 1.18rem); }
+    .pills { display: flex; gap: 9px; flex-wrap: wrap; }
+    .pill { padding: 6px 11px; color: #cad4d8; border: 1px solid var(--line); border-radius: 99px; background: #ffffff08; font-size: .8rem; }
+    .notice { display: grid; grid-template-columns: auto 1fr; gap: 13px; margin: 20px 0 30px; padding: 16px 18px; border: 1px solid #665330; border-radius: 14px; background: #30271999; color: #e7d9b9; font-size: .9rem; }
+    .notice strong { color: var(--amber); }
+    .notice-icon { font-size: 1.25rem; }
+    .toolbar { position: sticky; top: 0; z-index: 5; padding: 14px 0; background: #101318eF; backdrop-filter: blur(16px); border-top: 1px solid #ffffff0c; border-bottom: 1px solid var(--line); }
+    .controls { display: grid; grid-template-columns: minmax(190px, 1fr) auto; gap: 12px; align-items: center; }
+    .searchbox { display: flex; align-items: center; gap: 10px; padding: 0 14px; min-height: 48px; border: 1px solid #39444e; border-radius: 12px; background: var(--panel); }
+    .searchbox span { color: var(--muted); }
+    .searchbox input { width: 100%; border: 0; outline: 0; color: var(--text); background: transparent; }
+    .searchbox input::placeholder { color: #7f8c94; }
+    .segmented { display: flex; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+    .segmented button, .category { border: 0; cursor: pointer; border-radius: 8px; background: transparent; color: var(--muted); }
+    .segmented button { padding: 8px 12px; font-size: .85rem; }
+    .segmented button.active { color: #102118; background: var(--green); font-weight: 800; }
+    .categories { display: flex; gap: 7px; overflow-x: auto; padding: 12px 0 1px; scrollbar-width: thin; }
+    .category { white-space: nowrap; padding: 6px 11px; border: 1px solid var(--line); font-size: .78rem; }
+    .category.active { border-color: #579d78; color: var(--mint); background: #244332; }
+    .results-meta { display: flex; justify-content: space-between; gap: 12px; padding: 22px 0 12px; color: var(--muted); font-size: .86rem; }
+    .results-meta strong { color: var(--text); }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; padding-bottom: 55px; }
+    .card { display: flex; flex-direction: column; min-width: 0; min-height: 215px; padding: 17px; border: 1px solid var(--line); border-radius: 15px; background: linear-gradient(145deg, #1a2028, #151a20); box-shadow: 0 7px 22px #0002; transition: transform .16s ease, border-color .16s ease; }
+    .card:hover { transform: translateY(-2px); border-color: #496153; }
+    .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .kind { color: var(--green); font-size: .67rem; text-transform: uppercase; letter-spacing: .12em; font-weight: 900; }
+    .category-label { color: var(--muted); font-size: .72rem; text-align: right; }
+    .card h2 { margin: 9px 0 5px; font-size: 1.1rem; line-height: 1.3; overflow-wrap: anywhere; }
+    .card p { margin: 6px 0 11px; color: #acb8be; font-size: .86rem; }
+    .best { margin-top: auto !important; padding-top: 8px; border-top: 1px solid #ffffff0b; color: #d3ddd9 !important; }
+    .best b { color: var(--mint); font-size: .74rem; text-transform: uppercase; letter-spacing: .06em; }
+    pre { position: relative; overflow: auto; margin: 9px 0 5px; padding: 11px 43px 11px 12px; border: 1px solid #303b43; border-radius: 9px; background: #0d1116; color: #d2f4df; font: .8rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .copy { position: absolute; top: 6px; right: 6px; padding: 5px 7px; border: 1px solid #37434c; border-radius: 6px; background: #202832; color: #cad4d8; cursor: pointer; font-size: .68rem; }
+    .copy:hover { color: var(--mint); border-color: #579d78; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+    .empty { grid-column: 1/-1; padding: 60px 20px; text-align: center; color: var(--muted); border: 1px dashed var(--line); border-radius: 15px; }
+    .footer { padding: 28px 0 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: .84rem; }
+    .footer-links { display: flex; gap: 18px; flex-wrap: wrap; margin: 12px 0; }
+    .footer p { max-width: 780px; }
+    @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 620px) {
+      .wrap { width: min(100% - 24px, 1180px); }
+      .hero { padding-top: 33px; }
+      .controls { grid-template-columns: 1fr; }
+      .segmented { justify-content: stretch; }
+      .segmented button { flex: 1; }
+      .grid { grid-template-columns: 1fr; }
+      .card { min-height: 0; }
+      .top-link { font-size: .75rem; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav class="topbar" aria-label="Main navigation">
+      <div class="brand"><span class="brand-icon" aria-hidden="true">&gt;_</span> TERMUX FIELD GUIDE</div>
+      <a class="top-link" href="#references">Official references ↗</a>
+    </nav>
+    <section class="hero">
+      <div class="eyebrow">Pocket terminal, practical power</div>
+      <h1>Make your phone<br>feel like <span>your machine.</span></h1>
+      <p class="lede">A searchable, offline-ready field guide to Termux setup, packages, shell commands, Android features, and the workflows that make them useful.</p>
+      <div class="pills"><span class="pill">No internet needed to browse</span><span class="pill">Copy-ready commands</span><span class="pill">Phone-friendly layout</span></div>
+    </section>
+    <aside class="notice">
+      <span class="notice-icon" aria-hidden="true">✦</span>
+      <div><strong>About “every package”:</strong> Termux repositories change, and available packages depend on your app version, architecture, and enabled repositories. This guide covers a broad practical selection; use <code>pkg list-all</code> on your device for the complete live catalog and search it with <code>pkg search NAME</code>.</div>
+    </aside>
+  </header>
+
+  <section class="toolbar" aria-label="Search and filters">
+    <div class="wrap">
+      <div class="controls">
+        <label class="searchbox"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Search packages, commands, or use cases…" autocomplete="off" aria-label="Search the guide"></label>
+        <div class="segmented" role="group" aria-label="Filter by entry type">
+          <button class="active" data-kind="all" type="button">Everything</button>
+          <button data-kind="package" type="button">Packages</button>
+          <button data-kind="command" type="button">Commands</button>
+        </div>
+      </div>
+      <div class="categories" id="categories" aria-label="Filter by category"></div>
+    </div>
+  </section>
+
+  <main class="wrap">
+    <div class="results-meta"><span id="count" aria-live="polite"></span><span>Tap <strong>Copy</strong> to grab a command</span></div>
+    <div id="copy-status" class="sr-only" aria-live="polite"></div>
+    <section class="grid" id="results" aria-label="Cheatsheet entries"></section>
+  </main>
+
+  <footer class="footer" id="references">
+    <div class="wrap">
+      <strong>Keep your install healthy</strong>
+      <p>Install Termux from a trusted source and keep Termux and its add-ons from the same source. Do not use <code>sudo</code> or install Debian/Ubuntu packages into Termux; it is not a rooted Linux distribution. Android may stop long-running jobs when battery optimization is enabled.</p>
+      <div class="footer-links">
+        <a href="https://termux.dev/en/">Termux project</a>
+        <a href="https://github.com/termux/termux-packages">Package recipes and docs</a>
+        <a href="https://github.com/termux/termux-api">Termux:API</a>
+        <a href="https://github.com/termux/termux-services">Termux:Services</a>
+      </div>
+      <small>Single-file reference • Works offline once saved • Verify commands before using them on important data</small>
+    </div>
+  </footer>
+
+  <script>
+    "use strict";
+    const entries = [
+      { kind: "command", category: "First steps", title: "Update Termux", code: "pkg update && pkg upgrade", summary: "Refresh repository metadata, then upgrade installed packages.", best: "A fresh install or regular maintenance. Read upgrade prompts before confirming." },
+      { kind: "command", category: "First steps", title: "Choose a mirror", code: "termux-change-repo", summary: "Choose a working mirror when downloads are slow or a repository is unavailable.", best: "Mirror outages or repeated fetch errors. Select official mirrors." },
+      { kind: "command", category: "First steps", title: "Storage access", code: "termux-setup-storage", summary: "Request Android shared-storage access and create ~/storage shortcuts.", best: "Reading or exporting files in Downloads and other shared folders. Grant the Android permission prompt." },
+      { kind: "command", category: "First steps", title: "Find packages", code: "pkg search <query>\\npkg show <package>", summary: "Search configured repositories or inspect package details before installing.", best: "Check availability, description, and version before a new install." },
+      { kind: "command", category: "First steps", title: "Install / remove", code: "pkg install <package>\\npkg uninstall <package>", summary: "Install a package and remove it later if you no longer need it.", best: "Use the Termux package manager rather than downloading random .deb files." },
+      { kind: "command", category: "First steps", title: "Package details & files", code: "pkg show <package>\\npkg files <package>", summary: "Review package metadata or list the files installed by a package.", best: "Find a command's owning package or confirm what an install provides." },
+      { kind: "command", category: "First steps", title: "Repair an install", code: "pkg reinstall <package>", summary: "Reinstall a package if its files are missing or corrupted.", best: "Restore a package without removing unrelated data first." },
+      { kind: "command", category: "First steps", title: "List package catalog", code: "pkg list-all\\npkg list-installed", summary: "Show packages available from enabled repos or those already installed.", best: "Get the full, current package list for this device; save output with > packages.txt." },
+      { kind: "command", category: "First steps", title: "Clean package cache", code: "apt clean\\napt autoremove", summary: "Clear cached downloads or remove dependencies that are no longer needed.", best: "Recover space. Review autoremove's proposed list before proceeding." },
+      { kind: "command", category: "Shell basics", title: "Navigate directories", code: "pwd\\nls -lah\\ncd ~/storage/downloads", summary: "Print the current path, inspect files (including hidden ones), and change folders.", best: "Orient yourself before running scripts or moving files." },
+      { kind: "command", category: "Shell basics", title: "Files and folders", code: "mkdir -p ~/projects/demo\\ncp source.txt copy.txt\\nmv old.txt new.txt\\nrm file.txt", summary: "Create directories and copy, move, or delete files.", best: "Use explicit paths. rm does not move files to Android's trash; double-check before deleting." },
+      { kind: "command", category: "Shell basics", title: "Read and search text", code: "cat notes.txt\\nless notes.txt\\ngrep -RIn 'TODO' ~/projects", summary: "Print a small file, page through a large one, or recursively search text.", best: "Inspect logs, configs, and source code; use less for long output." },
+      { kind: "command", category: "Shell basics", title: "Pipes and redirects", code: "command 2>&1 | tee output.log\\nprintf '%s' 'hello' > note.txt", summary: "Connect command output, keep a log, or write text to a file.", best: "Capture reproducible troubleshooting logs. > replaces a file; >> appends." },
+      { kind: "command", category: "Shell basics", title: "Permissions", code: "chmod u+x script.sh\\n./script.sh", summary: "Make a script executable for its owner, then run it from the current directory.", best: "Run a script you trust. Inspect downloaded scripts before executing them." },
+      { kind: "command", category: "Shell basics", title: "Processes", code: "ps -ef\\ntop\\nkill <PID>", summary: "Inspect processes, monitor resource use, and signal a process you own.", best: "Find a stuck command. Avoid force-killing processes unless needed." },
+      { kind: "command", category: "Shell basics", title: "Environment", code: "echo $HOME\\necho $PREFIX\\nenv | sort", summary: "Inspect Termux paths and environment variables.", best: "Debug a script or confirm where Termux stores its private files." },
+      { kind: "Files & backup", category: "Files & backup", title: "Archive a project", code: "tar -czf project.tgz project/\\ntar -tzf project.tgz", summary: "Create and inspect a compressed tar archive.", best: "Portable project backups. Check the archive listing before extraction." },
+      { kind: "Files & backup", category: "Files & backup", title: "Disk space", code: "df -h\\ndu -sh ~/.* ~/projects 2>/dev/null", summary: "Check free space and estimate directory sizes.", best: "Find what's consuming storage before cleaning caches." },
+      { kind: "Files & backup", category: "Files & backup", title: "Transfer files with SSH", code: "scp file.txt user@host:~/\\nscp user@host:~/file.txt .", summary: "Copy files securely to or from a reachable SSH server.", best: "Move backups between your phone and a trusted computer." },
+      { kind: "Network", category: "Network", title: "Check connectivity", code: "ping -c 4 example.com\\ncurl -I https://example.com", summary: "Test name resolution/reachability and inspect an HTTP response.", best: "Separate network/DNS problems from package or application problems." },
+      { kind: "Network", category: "Network", title: "Download a file", code: "curl -fL -o file.zip 'https://example.com/file.zip'", summary: "Fetch a URL, follow redirects, fail on HTTP errors, and choose the output filename.", best: "Download files from a source you trust; validate checksums for important files." },
+      { kind: "Network", category: "Network", title: "Inspect listening ports", code: "ss -lntup", summary: "Show listening TCP/UDP sockets and associated processes when permitted.", best: "Debug a local development server or unexpected open port." },
+      { kind: "Network", category: "Network", title: "Serve a local folder", code: "python -m http.server 8000 --bind 127.0.0.1", summary: "Start a temporary web server rooted at the current directory.", best: "Preview or share files with a browser on the same device. Stop with Ctrl+C; avoid exposing sensitive folders to a network." },
+      { kind: "Network", category: "Network", title: "SSH server", code: "pkg install openssh iproute2\\npasswd\\nsshd\\nwhoami\\nip addr", summary: "Install OpenSSH and IP tools, set a Termux password, and start the SSH daemon.", best: "Remote shell access from your own LAN. Termux sshd uses port 8022 by default; connect to your phone's LAN address." },
+      { kind: "Git & development", category: "Git & development", title: "Clone and sync code", code: "git clone <repo-url>\\ngit status\\ngit pull --ff-only", summary: "Download a repository, inspect changes, and fast-forward from its remote.", best: "Work on source code. Review status before pulls so local work stays safe." },
+      { kind: "Git & development", category: "Git & development", title: "Python virtual environment", code: "python -m venv .venv\\nsource .venv/bin/activate\\npython -m pip install -r requirements.txt", summary: "Create an isolated Python environment and install a project's declared dependencies.", best: "Keep project dependencies separate. Deactivate with `deactivate`." },
+      { kind: "Git & development", category: "Git & development", title: "Compile a C program", code: "clang hello.c -o hello\\n./hello", summary: "Compile a C source file with Clang and run the output.", best: "Small native tools and learning C. Install clang first." },
+      { kind: "Git & development", category: "Git & development", title: "Keep a long session alive", code: "tmux new -s work\\n# detach: Ctrl+b, then d\\ntmux attach -t work", summary: "Create a terminal multiplexer session that can be detached and resumed.", best: "Builds or SSH sessions that you need to revisit. Android may still kill apps in the background." },
+      { kind: "Android integration", category: "Android integration", title: "Termux:API setup", code: "pkg install termux-api", summary: "Install CLI clients for Android features. Also install the separate Termux:API companion app from the same trusted source as Termux.", best: "Automating battery, clipboard, notifications, sensors, or camera with Android permission prompts." },
+      { kind: "Android integration", category: "Android integration", title: "Battery & clipboard", code: "termux-battery-status\\ntermux-clipboard-get", summary: "Read battery details or fetch text currently on the Android clipboard (API add-on required).", best: "Device-aware scripts and quick terminal/browser copy workflows." },
+      { kind: "Android integration", category: "Android integration", title: "Notification & vibration", code: "termux-notification --title 'Done' --content 'Task finished'\\ntermux-vibrate -d 300", summary: "Send an Android notification or a short vibration (API add-on required).", best: "Get feedback when a long command finishes. Android can limit background work." },
+      { kind: "Services & repos", category: "Services & repos", title: "Manage services", code: "pkg install termux-services\\n# restart the shell, then:\\nsv-enable <service>\\nsv up <service>\\nsv status <service>", summary: "Install runit service helpers; enable a service to start with the service supervisor.", best: "Manage supported daemons. Check package documentation for its service name and supervise status." },
+      { kind: "Services & repos", category: "Services & repos", title: "Enable additional repos", code: "pkg install root-repo\\n# optional: pkg install x11-repo", summary: "Enable extra Termux repositories for packages that are not in the main repo.", best: "Only when you need a package from that repository; availability varies by architecture and Termux release." },
+      { kind: "Packages", category: "Essentials", title: "git", summary: "Distributed version control for cloning repositories and tracking local changes.", install: "pkg install git", best: "Source-code work, dotfiles, and versioned notes." },
+      { kind: "Packages", category: "Essentials", title: "openssh", summary: "SSH client and server tools for secure remote shell and file transfer.", install: "pkg install openssh", best: "Connect to a computer, or access Termux from your own local network." },
+      { kind: "Packages", category: "Essentials", title: "nano / vim", summary: "Terminal text editors; install one or both to edit configs and scripts.", install: "pkg install nano vim", best: "nano for a gentle start; vim for efficient modal editing." },
+      { kind: "Packages", category: "Essentials", title: "less / tree / file", summary: "Page through text, view directory trees, and identify file types.", install: "pkg install less tree file", best: "Explore project folders and inspect unfamiliar downloads." },
+      { kind: "Packages", category: "Essentials", title: "zip / unzip / tar", summary: "Create or unpack common archive formats.", install: "pkg install zip unzip tar", best: "Back up projects or exchange files with desktop systems." },
+      { kind: "Packages", category: "Essentials", title: "coreutils / findutils", summary: "Common file utilities and tools for locating files.", install: "pkg install coreutils findutils", best: "Shell workflows that depend on familiar GNU-style commands." },
+      { kind: "Packages", category: "Network tools", title: "curl / wget", summary: "Command-line HTTP clients for downloads, APIs, and diagnostics.", install: "pkg install curl wget", best: "Fetch trusted assets or test a web service." },
+      { kind: "Packages", category: "Network tools", title: "nmap", summary: "Network discovery and port scanning toolkit.", install: "pkg install nmap", best: "Inventory devices on networks you own or are authorized to assess." },
+      { kind: "Packages", category: "Network tools", title: "dnsutils", summary: "DNS lookup tools such as dig and nslookup.", install: "pkg install dnsutils", best: "Troubleshoot hostname and DNS configuration." },
+      { kind: "Packages", category: "Network tools", title: "openssh / rsync", summary: "Secure remote login and efficient file synchronization.", install: "pkg install openssh rsync", best: "Sync your own files to a server over SSH." },
+      { kind: "Packages", category: "Network tools", title: "inetutils / iproute2", summary: "Networking utilities, including ping and socket/interface inspection.", install: "pkg install inetutils iproute2", best: "Diagnose routes, addresses, and basic connectivity." },
+      { kind: "Packages", category: "Languages & build", title: "python", summary: "Python interpreter and package tooling for scripts and web projects.", install: "pkg install python", best: "Automation, data processing, small services, and learning." },
+      { kind: "Packages", category: "Languages & build", title: "nodejs-lts", summary: "Long-term-support Node.js runtime and npm package manager.", install: "pkg install nodejs-lts", best: "JavaScript tooling, CLI projects, and lightweight development servers." },
+      { kind: "Packages", category: "Languages & build", title: "clang / make / pkg-config", summary: "C/C++ compiler, build automation, and native-library metadata helper.", install: "pkg install clang make pkg-config", best: "Compile native software and build projects with make." },
+      { kind: "Packages", category: "Languages & build", title: "golang / rust", summary: "Compilers and toolchains for Go or Rust.", install: "pkg install golang rust", best: "Build native command-line tools; larger builds need time and storage." },
+      { kind: "Packages", category: "Languages & build", title: "ruby / php / perl", summary: "Interpreters for Ruby, PHP, and Perl scripts and applications.", install: "pkg install ruby php perl", best: "Run compatible scripts and experiment with each language." },
+      { kind: "Packages", category: "Languages & build", title: "openjdk-21", summary: "Java development kit for Java programs and build tools.", install: "pkg install openjdk-21", best: "Compile or run Java projects that fit the available Android environment." },
+      { kind: "Packages", category: "Languages & build", title: "proot-distro", summary: "Install and run Linux distributions in userspace using PRoot; not a VM or root.", install: "pkg install proot-distro", best: "Experiment with a distro userland. It does not grant Android root or a full Linux kernel." },
+      { kind: "Packages", category: "Data & productivity", title: "sqlite", summary: "Compact embedded SQL database and sqlite3 shell.", install: "pkg install sqlite", best: "Inspect local databases or prototype small data-driven tools." },
+      { kind: "Packages", category: "Data & productivity", title: "jq", summary: "Filter and transform JSON from the command line.", install: "pkg install jq", best: "Inspect API responses and automate JSON-based workflows." },
+      { kind: "Packages", category: "Data & productivity", title: "ffmpeg", summary: "Audio and video conversion, inspection, and processing tools.", install: "pkg install ffmpeg", best: "Batch-convert media you own or have permission to process." },
+      { kind: "Packages", category: "Data & productivity", title: "ImageMagick", summary: "Image inspection and command-line transformations.", install: "pkg install imagemagick", best: "Resize, convert, or automate edits across image batches." },
+      { kind: "Packages", category: "Data & productivity", title: "pandoc", summary: "Document converter for supported markup and document formats.", install: "pkg install pandoc", best: "Convert your own notes between Markdown, HTML, and other supported formats." },
+      { kind: "Packages", category: "Data & productivity", title: "rclone", summary: "Manage files across supported cloud-storage services.", install: "pkg install rclone", best: "Sync or back up files after carefully configuring remote credentials." },
+      { kind: "Packages", category: "Editors & terminal", title: "tmux", summary: "Terminal multiplexer with persistent, multi-pane sessions.", install: "pkg install tmux", best: "Keep a shell workspace organized during long interactive tasks." },
+      { kind: "Packages", category: "Editors & terminal", title: "zsh / fish", summary: "Alternative interactive shells with completion and customization.", install: "pkg install zsh fish", best: "Personalize interactive use; keep scripts explicit about their interpreter." },
+      { kind: "Packages", category: "Editors & terminal", title: "ripgrep / fd", summary: "Fast recursive text search and a convenient alternative file finder.", install: "pkg install ripgrep fd", best: "Find code or files quickly in larger project folders." },
+      { kind: "Packages", category: "Editors & terminal", title: "htop", summary: "Interactive process and resource monitor.", install: "pkg install htop", best: "Check which processes are using CPU or memory." },
+      { kind: "Packages", category: "Editors & terminal", title: "man", summary: "Manual-page reader for installed command documentation.", install: "pkg install man", best: "Look up command options locally; not all packages include man pages." },
+      { kind: "Packages", category: "Services & Android", title: "termux-api", summary: "CLI clients for Android device features; requires the separate companion app.", install: "pkg install termux-api", best: "Use Android sensors, clipboard, notifications, and other supported APIs from scripts." },
+      { kind: "Packages", category: "Services & Android", title: "termux-services", summary: "runit-based service supervision helpers for Termux.", install: "pkg install termux-services", best: "Enable and manage packages that provide supported service definitions." },
+      { kind: "Packages", category: "Services & Android", title: "termux-tools", summary: "Termux utilities, including package-manager and Android storage helpers.", install: "pkg install termux-tools", best: "Keep core Termux commands available; normally present in a standard install." }
+    ];
+
+    const search = document.querySelector("#search");
+    const results = document.querySelector("#results");
+    const categories = document.querySelector("#categories");
+    const count = document.querySelector("#count");
+    const copyStatus = document.querySelector("#copy-status");
+    let selectedKind = "all";
+    let selectedCategory = "All";
+    const categoryNames = ["All", ...new Set(entries.map(entry => entry.category))];
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+    }
+
+    function renderCategories() {
+      categories.innerHTML = categoryNames.map(name =>
+        `<button class="category${name === selectedCategory ? " active" : ""}" type="button" data-category="${escapeHtml(name)}">${escapeHtml(name)}</button>`
+      ).join("");
+    }
+
+    function render() {
+      const query = search.value.trim().toLowerCase();
+      const filtered = entries.filter(entry => {
+        const matchesKind = selectedKind === "all" || (selectedKind === "package" ? entry.kind === "Packages" : entry.kind === "command");
+        const matchesCategory = selectedCategory === "All" || entry.category === selectedCategory;
+        const haystack = [entry.title, entry.category, entry.summary, entry.best, entry.code, entry.install].filter(Boolean).join(" ").toLowerCase();
+        return matchesKind && matchesCategory && haystack.includes(query);
+      });
+      count.innerHTML = `<strong>${filtered.length}</strong> ${filtered.length === 1 ? "entry" : "entries"}${query ? ` matching “${escapeHtml(search.value.trim())}”` : ""}`;
+      results.innerHTML = filtered.length ? filtered.map(entry => {
+        const label = entry.kind === "Packages" ? "PACKAGE" : "COMMAND";
+        const code = entry.install || entry.code;
+        const displayCode = escapeHtml(code.replaceAll("\\n", "\n"));
+        return `<article class="card">
+          <div class="card-head"><span class="kind">${label}</span><span class="category-label">${escapeHtml(entry.category)}</span></div>
+          <h2>${escapeHtml(entry.title)}</h2>
+          <p>${escapeHtml(entry.summary)}</p>
+          <pre><code>${displayCode}</code><button class="copy" type="button" aria-label="Copy ${escapeHtml(entry.title)} command">Copy</button></pre>
+          <p class="best"><b>Best for</b><br>${escapeHtml(entry.best)}</p>
+        </article>`;
+      }).join("") : `<div class="empty">No matches yet. Try a shorter term or select another category.</div>`;
+    }
+
+    search.addEventListener("input", render);
+    categories.addEventListener("click", event => {
+      const button = event.target.closest("button[data-category]");
+      if (!button) return;
+      selectedCategory = button.dataset.category;
+      renderCategories();
+      render();
+    });
+    document.querySelector(".segmented").addEventListener("click", event => {
+      const button = event.target.closest("button[data-kind]");
+      if (!button) return;
+      selectedKind = button.dataset.kind;
+      document.querySelectorAll(".segmented button").forEach(item => item.classList.toggle("active", item === button));
+      render();
+    });
+    results.addEventListener("click", async event => {
+      const button = event.target.closest(".copy");
+      if (!button) return;
+      const text = button.parentElement.querySelector("code").textContent;
+      try {
+        await navigator.clipboard.writeText(text);
+        button.textContent = "Copied";
+        copyStatus.textContent = "Command copied.";
+      } catch {
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(button.parentElement.querySelector("code"));
+        selection.removeAllRanges();
+        selection.addRange(range);
+        button.textContent = "Select & copy";
+        copyStatus.textContent = "Command selected. Copy it now.";
+      }
+      window.setTimeout(() => { button.textContent = "Copy"; }, 1500);
+    });
+    renderCategories();
+    render();
+  </script>
+</body>
+</html>
