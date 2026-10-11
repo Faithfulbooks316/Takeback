@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#101810">
+    <meta name="description" content="A lightweight, offline-friendly Termux cookbook with 20 editable marketing automation scripts.">
+    <title>Takeback — Marketing command cookbook</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="wordmark" href="#" aria-label="Takeback home"><span class="mark">T</span> takeback</a>
+      <span class="topbar-note">TERMUX · MARKETING TOOLKIT</span>
+    </header>
+    <main>
+      <section class="hero">
+        <p class="eyebrow">YOUR AUTOMATION WORKBENCH</p>
+        <h1>Less busywork.<br><span>More good work.</span></h1>
+        <p class="intro">A pocket-sized command cookbook for the work behind your marketing. Pick a recipe, make it yours, run it when you're ready.</p>
+        <div class="hero-meta"><span class="live-dot"></span> 20 ready-to-adapt recipes <span class="meta-divider">·</span> No account, no tracking</div>
+      </section>
+
+      <section class="workbench" aria-label="Recipe workbench">
+        <div class="library">
+          <div class="section-heading">
+            <div><p class="eyebrow">THE LIBRARY</p><h2>Pick a recipe</h2></div>
+            <span class="count" id="recipe-count"></span>
+          </div>
+          <label class="search-wrap">
+            <span aria-hidden="true">⌕</span>
+            <input id="search" type="search" placeholder="Find a task..." autocomplete="off" aria-label="Search recipes">
+            <kbd>/</kbd>
+          </label>
+          <div class="filters" id="filters" aria-label="Filter recipes by category"></div>
+          <div class="recipe-list" id="recipe-list" aria-live="polite"></div>
+        </div>
+
+        <section class="editor-panel" aria-label="Selected recipe">
+          <div id="empty-state" class="empty-state">
+            <span class="empty-glyph">⌘</span>
+            <h2>Pick something to make</h2>
+            <p>Choose a recipe from the library. Read its notes, tune the script, and take it with you.</p>
+          </div>
+          <div id="recipe-view" hidden>
+            <div class="editor-heading">
+              <div>
+                <p class="eyebrow" id="recipe-category"></p>
+                <h2 id="recipe-title"></h2>
+                <p class="recipe-description" id="recipe-description"></p>
+              </div>
+              <span class="shell-badge">BASH</span>
+            </div>
+            <details class="notes">
+              <summary><span class="note-icon">i</span> Implementation notes</summary>
+              <p id="recipe-notes"></p>
+            </details>
+            <div class="code-label"><span>YOUR SCRIPT</span><span class="line-hint">Edit freely before you export</span></div>
+            <label class="visually-hidden" for="script-editor">Editable shell script</label>
+            <textarea id="script-editor" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Editable shell script"></textarea>
+            <div class="editor-actions">
+              <button class="button button-quiet" id="reset-button" type="button">↺ <span>Reset</span></button>
+              <div class="action-group">
+                <button class="button button-secondary" id="copy-button" type="button">Copy script</button>
+                <button class="button button-primary" id="download-button" type="button">↓ Download .sh</button>
+              </div>
+            </div>
+            <p class="safety-note"><span>!</span> Review every line before running. Scripts never execute in this app.</p>
+          </div>
+        </section>
+      </section>
+
+      <section class="tool-strip" aria-label="Optional integrations">
+        <div><p class="eyebrow">PLAYS WELL WITH YOUR TOOLKIT</p><p>Kron · Copilot CLI · Ollama · Netlify</p></div>
+        <a href="README.md">Setup &amp; integration notes <span aria-hidden="true">↗</span></a>
+      </section>
+    </main>
+    <footer><span>TAKEBACK <span class="footer-dot">·</span> BUILT FOR THE TERMINAL IN YOUR POCKET</span><span>Scripts stay yours. Nothing runs without you.</span></footer>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

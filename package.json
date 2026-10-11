@@ -1,16 +1,9 @@
 {
   "name": "takeback",
   "version": "1.0.0",
-  "description": "Takeback",
-  "main": "index.js",
+  "private": true,
+  "description": "An offline-friendly Termux marketing automation recipe cookbook",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "http://localhost:26831/Faithfulbooks316/Takeback"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+    "dev": "python3 -m http.server 8000"
+  }
 }
