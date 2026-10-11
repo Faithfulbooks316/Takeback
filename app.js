@@ -536,7 +536,7 @@ function renderRecipes() {
   const matches = visibleRecipes();
   recipeList.replaceChildren();
   count.textContent = `${matches.length} ${matches.length === 1 ? "recipe" : "recipes"}`;
-  matches.forEach((recipe, index) => {
+  matches.forEach((recipe) => {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `recipe-card${selectedRecipe === recipe ? " selected" : ""}`;
@@ -560,7 +560,6 @@ function renderRecipes() {
     button.append(number, details, arrow);
     button.addEventListener("click", () => selectRecipe(recipe));
     recipeList.append(button);
-    if (index === 0 && matches.length === 0) button.hidden = true;
   });
   if (!matches.length) {
     const message = document.createElement("p");

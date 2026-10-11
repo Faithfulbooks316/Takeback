@@ -5,13 +5,13 @@ Takeback is a small, offline-friendly marketing command cookbook for Termux. It 
 ## Run in Termux
 
 ```sh
-pkg install python
+pkg install python git
 git clone <your-repository-url> takeback
 cd takeback
 npm run dev
 ```
 
-Open `http://127.0.0.1:8000` in the phone's browser. `npm` is not required to run the app; Python's built-in HTTP server serves the static files. You can also open `index.html` directly, though some browsers restrict local-file features.
+Open `http://127.0.0.1:8000` in the phone's browser. `npm` is not required: you can run `python3 -m http.server 8000` instead. Python's built-in HTTP server serves the static files. You can also open `index.html` directly, though some browsers restrict local-file features.
 
 ## Use a recipe
 
